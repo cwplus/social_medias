@@ -1,0 +1,247 @@
+/*=========================
+  Icons
+ ================= */
+
+/* footer social icons */
+ul.social-media {
+    list-style: none;
+    display: inline-block;
+    margin-left: 0 !important;
+    padding: 0;
+    margin-top: 15px;
+}
+
+ul.social-media li {
+    margin: 0 1px;
+    width: 50px;
+    display: inline-block;
+}
+
+/* footer social icons */
+.social-media li a i {
+    margin: 0;
+    line-height: 50px;
+    text-align: center;
+    color: #000;
+}
+
+.social-media li.total{
+    display: inline-table;
+    float: right;
+    width: auto;
+}
+
+.social-media li.total span{
+    /*background-color:#fff;*/
+    background: transparent;
+    color: #F56505;
+}
+
+.social-media li.total span.text{
+
+}
+
+.social-media li.total span.s-counter{
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.social-media li{
+}
+
+.social-default li a{
+    display: inline-block;
+    position: relative;
+    margin: 0 auto 0 auto;
+    text-align: center;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    /*background-color: #d3d3d3;*/
+    background-color: #fff;
+    border: 2px solid #000;
+}
+
+.social-circle li a {
+    display: inline-block;
+    position: relative;
+    margin: 0 auto 0 auto;
+    text-align: center;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    /*background-color: #d3d3d3;*/
+    background-color: #fff;
+    border: 2px solid #000;
+}
+
+.social-default li span{
+    background-color: #f56505;
+    color: #fff;
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+}
+
+.social-default li a:hover i,.social-circle li a:hover i, .triggeredHover {
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -ms--transform: rotate(360deg);
+    transform: rotate(360deg);
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    -ms-transition: all 0.2s;
+    transition: all 0.2s;
+}
+
+.social-circle i,.social-default i {
+    color: #fff;
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    -ms-transition: all 0.2s;
+    transition: all 0.2s;
+}
+
+.news-v3 .post-shares li a span{
+    border-radius: inherit;
+}
+
+.social-media a.icoRss {
+    border-color: #F56505;
+}
+
+.social-media a.icoFacebook {
+    border-color: #3B5998;
+}
+
+.social-media a.icoTwitter {
+    border-color: #33ccff;
+}
+
+.social-media a.icoGoogle {
+    border-color: #BD3518;
+}
+
+.social-media a.icoVimeo {
+    border-color: #0590B8;
+}
+
+.social-media a.icoLinkedin {
+    border-color: #007bb7;
+}
+
+.social-media a.icoStumbleupon {
+    border-color: #eb4924;
+}
+
+.social-media a.icoPinterest {
+    border-color: #bd081c;
+}
+
+.social-media a.icoXing {
+    border-color: #006568;
+}
+
+.social-media a.icoDelicious {
+    border-color: #59B9FE;
+}
+
+.social-media a.icoReddit{
+    border-color:#FE6932;
+}
+
+.social-media a.icoVk{
+    border-color:#8099B4;
+}
+
+/**hover***/
+.social-media a.icoRss:hover {
+    background-color: #F56505;
+}
+
+.social-media a.icoFacebook:hover {
+    background-color: #3B5998;
+}
+
+.social-media a.icoTwitter:hover {
+    background-color: #33ccff;
+}
+
+.social-media a.icoGoogle:hover {
+    background-color: #BD3518;
+}
+
+.social-media a.icoVimeo:hover {
+    background-color: #0590B8;
+}
+
+.social-media a.icoLinkedin:hover {
+    background-color: #007bb7;
+}
+
+.social-media a.icoStumbleupon:hover {
+    background-color: #eb4924;
+}
+
+.social-media a.icoPinterest:hover {
+    background-color: #bd081c;
+}
+
+.social-media a.icoXing:hover {
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#006568+0,00888e+100 */
+    background: #006568; /* Old browsers */
+    background: -moz-linear-gradient(top, #006568 0%, #00888e 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #006568 0%,#00888e 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #006568 0%,#00888e 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#006568', endColorstr='#00888e',GradientType=0 ); /* IE6-9 */
+}
+
+.social-media a.icoDelicious:hover {
+    background-color: #59B9FE;
+}
+
+
+.social-media a.icoShareCounter:hover
+{
+    background-color: #ddd;
+}
+
+.social-media a.icoReddit:hover{
+    background-color:#FE6932;
+}
+
+.social-media a.icoVk:hover{
+    background-color:#8099B4;
+}
+
+.social-media a.icoRss:hover i, .social-media a.icoFacebook:hover i, .social-media a.icoTwitter:hover i,
+.social-media a.icoGoogle:hover i, .social-media a.icoVimeo:hover i, .social-media a.icoLinkedin:hover i,
+.social-media a.icoStumbleupon:hover i, .social-media a.icoPinterest:hover i,.social-media a.icoVk:hover i,
+.social-media a.icoXing:hover i, .social-media a.icoDelicious:hover i,.social-media a.icoReddit:hover i{
+    color: #fff;
+}
+
+a.socialIcon:hover, .socialHoverClass {
+    color: #44BCDD;
+}
+
+/*.social-media li span {
+    top: -5px;
+    right: 6px;
+    color: #fff;
+    width: 22px;
+    height: 22px;
+    padding: 4px;
+    font-size: 10px;
+    line-height: 10px;
+    position: absolute;
+    text-align: center;
+    background: #72c02c;
+    border: 2px solid #fff;
+    border-radius: 50% !important;
+}*/

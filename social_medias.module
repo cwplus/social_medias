@@ -1,0 +1,328 @@
+<?php
+
+if(!defined('SOCIAL_MEDIAS')){
+    define('SOCIAL_MEDIAS', serialize(array(
+        1  =>'twitter',
+        2  =>'facebook',
+        3  =>'google',
+        4  =>'linkedin',
+        5  =>'stumbleupon',
+        6  =>'pinterest',
+        7  =>'xing',
+        8  =>'delicious',
+        9  =>'reddit',
+        10 =>'vk'
+       // 11 =>'buffer',
+    )));
+}
+
+/**
+ * Implements hook_permission().
+ */
+function social_medias_permission()
+{
+    $t = get_t();
+    $perms = array(
+        'administer cwplus social_medias' => array(
+            'title' => $t('Administer cwplus social_medias'),
+        ),
+    );
+    return $perms;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function social_medias_menu()
+{
+    $items = array();
+    $t =get_t();
+    $items['admin/config/cwplus'] = array(
+        'title' => 'Cwplus',
+        'description' => $t('Cwplus settings'),
+        'page callback' => 'system_admin_menu_block_page',
+        'access arguments' => array('administer cwplus'),
+        'position' => 'right',
+        'file' => 'system.admin.inc',
+        'file path' => drupal_get_path('module', 'system'),
+    );
+    $items['admin/config/cwplus/social-medias'] = array(
+        'title' => $t('Cwplus Social medias'),
+        'description' => $t('Configure Cwplus Social medias.'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('social_medias_admin_form'),
+        'access arguments' => array('administer cwplus social_medias'),
+        'file' => 'includes/social_medias.admin.inc',
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['social-medias/ajax-counter'] = array(
+        'page callback' => 'social_medias_counter',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+
+    return $items;
+}
+
+function social_medias_counter()
+{
+    header('content-type: application/json');
+    $json = array('url' => '', 'count' => 0);
+    if (isset($_GET['url']) && filter_var($_GET['url'], FILTER_VALIDATE_URL)) {
+        $json['url'] = $_GET['url'];
+        $url = urlencode($_GET['url']);
+        $service = urlencode($_GET['service']);
+        require_once 'includes/social_medias.counts.inc';
+        $json['count'] = call_user_func_array("get_{$service}", array($url));
+    }
+    echo str_replace('\\/', '/', json_encode($json));
+}
+
+/*function shorterTotal($num) {
+    if ($num >= 1e9) {
+        $num = "<b class='counter'>".number_format(($num / 1e9), 0, ".", ""). "</b> B";
+    } else if ($num >= 1e6) {
+        $num = "<b class='counter'>".number_format(($num / 1e6), 0, ".", "")."</b> M";
+    } else if ($num >= 1e3) {
+        $num = "<b class='counter'>".number_format(($num / 1e3), 0, ".", "")."</b> k";
+    }
+    return $num;
+}*/
+
+/**
+ * Implements hook_theme().
+ */
+function social_medias_theme($existing, $type, $theme, $path)
+{
+    $theme = array(
+        'social_medias' => array(
+            'template' => 'social-medias',
+            'variables' => array('data' => NULL),
+            'path' => drupal_get_path('module', 'social_medias') . '/templates',
+        ),
+        'social_medias_admin_form' => array(
+            'render element' => 'form',
+        ),
+    );
+
+    return $theme;
+}
+
+/**
+ * Implements hook_node_view().
+ */
+function social_medias_node_view($node, $view_mode, $langcode)
+{
+    switch ($view_mode) {
+        case 'search_result':
+        case 'search_index':
+        case 'rss':
+            return;
+    }
+
+    $enabled_view_modes = variable_get('sm_' . $node->type . '_options', array());
+    if (isset($enabled_view_modes[$view_mode]) && $enabled_view_modes[$view_mode]) {
+        $node->content['social_medias'] = array(
+            'html' => TRUE,
+            '#markup' => _sm_social_medias($node),
+            '#weight' => intval(variable_get('sm_display_weight', -10)),
+        );
+        if ($view_mode == 'full') {
+            $node->page_bottom['devel'] = array(
+                '#weight' => 25,
+                '#markup' => '<div style="clear:both;">social-medias-devel</div>',
+            );
+        }
+    }
+}
+
+
+/**
+ * Implements hook_page_build().
+ */
+function social_medias_page_build(&$page)
+{
+    drupal_add_css(drupal_get_path('module', 'social_medias') . '/css/social-medias.css');
+    drupal_add_js(drupal_get_path('module', 'social_medias') . '/js/social-medias.js');
+    $font_awesome = intval(variable_get('sm_font_awesome', 1));
+
+    if($font_awesome) drupal_add_css(drupal_get_path('module', 'social_medias') . '/css/font-awesome/css/font-awesome.min.css');
+
+    $social_medias = unserialize(SOCIAL_MEDIAS);
+
+    $sm_enabled = variable_get('sm_enabled',array_keys($social_medias));
+    $sm_has_counter = variable_get('sm_has_counter',array_keys($social_medias));
+    $social_medias_enabled = null;
+    $social_medias_has_counter =  null;
+    if($sm_enabled){
+        foreach($sm_enabled as $key =>$enabled){
+            $enabled = intval($enabled);
+            if($enabled > 0) {
+                $social_medias_enabled[] = $social_medias[$enabled];
+            }
+            if(($enabled > 0) && isset($sm_has_counter[$enabled]) && $sm_has_counter[$enabled] ) {
+                $social_medias_has_counter[$social_medias[$enabled]] = 1;
+            } /*elseif($enabled) {
+                $social_medias_has_counter[$social_medias[$key]] = 0;
+            }*/
+        }
+    }
+
+    $settings = array(
+        'social_medias'        => $social_medias,
+        'social_medias_enabled'=> $social_medias_enabled,
+        'social_medias_has_counter' =>$social_medias_has_counter,
+        'ajax_counter_url'=> url('social-medias/ajax-counter',array('absolute'=>true)),
+    );
+
+    drupal_add_js(array('sm'=>$settings), "setting");
+
+    $options = array(
+        'type' => 'file',
+        'scope' => 'footer',
+        'group' => JS_LIBRARY,
+        'cache' => FALSE,
+        'weight' => 10
+    );
+
+    drupal_add_js(drupal_get_path('module', 'social_medias') . '/js/social-medias.js', $options);
+}
+
+function _sm_social_medias($node=null)
+{
+    global $language;
+    $social_medias = unserialize(SOCIAL_MEDIAS);
+    $data = array();
+    $sm_enabled = variable_get('sm_enabled',array_keys($social_medias));
+    $sm_has_counter = variable_get('sm_has_counter',array_keys($social_medias));
+    $xing_follow = variable_get('xing_follow');
+    $hide_counter = variable_get('sm_hide_counter',0);
+    $social_medias_enabled = null;
+    $social_medias_has_counter =  null;
+    if($sm_enabled){
+        foreach($sm_enabled as $key =>$enabled){
+            $enabled = intval($enabled);
+            if($enabled) {
+                $social_medias_enabled[] = $social_medias[$key];
+            }
+            if(isset($sm_has_counter[$enabled]) && $sm_has_counter[$enabled]) {
+                $social_medias_has_counter[$social_medias[$key]] = 1;
+            } elseif($enabled) {
+                $social_medias_has_counter[$social_medias[$key]] = 0;
+            }
+        }
+    }
+
+    $data['media'] = '';
+    if(is_object($node)){
+        $category = taxonomy_term_load($node->field_category['und'][0]['tid']);
+        $data['hashtags'] = taxonomy_term_title($category);
+        if(isset($node->field_image) && $node->field_image['und']){
+            $data['media'] = image_style_url('single_973x615',$node->field_image['und'][0]['uri']);
+        }
+        $data['title'] = (module_exists('page_title')) ? page_title_page_get_title() : $node->title;
+        $data['nid'] = $node->nid;
+        $data['language'] = $node->language;
+        $data['absolute_url'] = url(drupal_get_path_alias('node/' . $node->nid),array('absolute'=>true));
+        $data['short_url'] = url(null,array('absolute'=>true)).'node/'.$node->nid;
+    } else {
+        $data['hashtags'] = null;
+        $data['nid'] = uniqid();
+        $data['language'] = $language->language;
+        $path = variable_get('sm_path', '');
+        if(is_null($path) || empty($path)){
+            $path = current_path();
+        }
+        if(($path == 'node') || ($path == "<front>")){
+            $path = '';
+        }
+        $data['absolute_url'] = url($path,array('absolute'=>true));
+        $data['short_url'] = $data['absolute_url'];
+        $data['title'] = (module_exists('page_title')) ? page_title_page_get_title() : decode_entities(drupal_get_title());
+    }
+
+
+
+    $data['xing_follow']= $xing_follow;
+    $data['via'] = variable_get('via','');
+    $data['social_medias_enabled'] = $social_medias_enabled;
+    $data['social_medias_has_counter'] = $social_medias_has_counter;
+    $data['hide_counter'] = $hide_counter;
+    $data['total_count'] = 0;
+
+    return theme('social_medias', array('data' => $data));
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function social_medias_block_info()
+{
+    $t = get_t();
+    $blocks = array();
+    $blocks['social_medias_block'] = array(
+        'info' => $t('Cwplus social medias block'),
+        'status' => TRUE,
+    );
+
+    return $blocks;
+}
+
+/**
+ * Implements hook_block_configure().
+ */
+function social_medias_block_configure($delta = '')
+{
+    $t =get_t();
+    $form = array();
+
+    if($delta == 'social_medias_block'){
+        $form['sm_path'] = array(
+            '#type' => 'textfield',
+            '#title' => $t('Enter the path that you want to share'),
+            '#size' => 60,
+            '#default_value' => variable_get('sm_path', ''),
+            '#description' => $t('Example: "node/30". For frontpage you can write "&#60;front&#62;"<br/>If not set, the default path is the path of current page.'),
+        );
+    }
+    return $form;
+}
+
+/**
+ * Implements hook_block_save().
+ */
+function social_medias_block_save($delta = '', $edit = array())
+{
+    if($delta == 'social_medias_block'){
+        variable_set('sm_path',$edit['sm_path']);
+    }
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function social_medias_block_view($delta = '')
+{
+    $block = array();
+
+    if($delta == 'social_medias_block'){
+        $block['content'] = _sm_social_medias();
+    }
+
+    return $block;
+}
+
+function _sm_block_view()
+{
+
+    $url = variable_get('sm_path', '');
+    if(empty($url)){
+        $url = url(current_path(),array('absolute'=>true));
+    }
+    /*$data = social_share_counter_get_options_array();
+    $data['title'] = $link_name;
+    $data['link_url'] = $link_url;
+    return theme('social_share_counter', array('data' => $data));*/
+    return '';
+
+}

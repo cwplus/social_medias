@@ -1,0 +1,4 @@
+.form-item .form-type-checkbox,.form-item .form-type-radio{
+    display: inline-block;
+    margin: 0 5px 0;
+}

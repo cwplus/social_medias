@@ -1,0 +1,12 @@
+name = Cwplus Social medias
+description = Add social medias links, developped by <a href="http://www.creationwebplus.be">Khalid EL HAKYM</a>
+core = 7.x
+package = Cwplus modules
+configure = admin/config/cwplus/social-medias
+dependencies[] = jquery_update
+
+; Information added by Drupal.org packaging script on 2016-07-27
+version = "7.x-2.3"
+core = "7.x"
+project = "cwplus"
+datestamp = "1469593940"
